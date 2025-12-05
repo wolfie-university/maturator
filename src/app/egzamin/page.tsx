@@ -164,7 +164,7 @@ export default function ExamPage() {
 
         <Card className="order-1 lg:order-2 bg-background/50 rounded-xl border p-4 shadow-sm">
           <CardHeader className="font-bold text-primary text-center">Mapa zadań</CardHeader>
-          <div className="grid grid-cols-5 gap-2">
+          <div className="flex flex-wrap justify-center gap-2">
             {exam.tasks.map((_, idx) => {
               const isAnswered = answers[idx] !== undefined;
               const isCurrent = currentTaskIndex === idx;
