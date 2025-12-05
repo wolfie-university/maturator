@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, XCircle, ChevronRight, HelpCircle } from "lucide-react";
 import { MathRenderer } from "./MathRenderer";
 import { MathInput } from "./MathInput";
-import { shuffleArray, cn } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { parseToLatex } from "@/lib/mathParser";
 
 interface TaskCardProps {
@@ -19,6 +19,20 @@ interface TaskCardProps {
   externalAnswer?: string | null;
   onAnswerChange?: (answer: string) => void;
 }
+
+const pseudoShuffle = (array: string[], seedStr: string) => {
+  let seed = seedStr.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const rng = () => {
+    const x = Math.sin(seed++) * 10000;
+    return x - Math.floor(x);
+  };
+  const newArr = [...array];
+  for (let i = newArr.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+  }
+  return newArr;
+};
 
 export const TaskCard = ({
   problem,
@@ -44,6 +58,16 @@ export const TaskCard = ({
     }
   }, [problem, mode]);
 
+  useEffect(() => {
+    if (mode !== "training" && externalAnswer) {
+      setLocalInput(externalAnswer);
+      setLocalInputLatex(parseToLatex(externalAnswer));
+    } else if (mode !== "training" && !externalAnswer) {
+      setLocalInput("");
+      setLocalInputLatex("");
+    }
+  }, [externalAnswer, mode, problem]);
+
   const currentAnswerRaw = mode === "training"
     ? (problem.answers.type === 'closed' ? localAnswer : localInput)
     : externalAnswer || "";
@@ -51,12 +75,13 @@ export const TaskCard = ({
   const shuffledAnswers = useMemo(() => {
     if (problem.answers.type === "closed" && problem.answers.distractors) {
       const all = [problem.answers.correct, ...problem.answers.distractors];
-      return shuffleArray(all);
+      return pseudoShuffle(all, problem.content.question_text);
     }
     return [];
   }, [problem]);
 
   const isCorrect = useMemo(() => {
+    if (mode === "exam_active") return false;
     if (mode === "training" && !isSubmitted) return false;
 
     if (problem.answers.type === 'closed') {
@@ -72,8 +97,12 @@ export const TaskCard = ({
 
   const handleSelectClosed = (val: string) => {
     if (mode === "exam_review" || (mode === "training" && isSubmitted)) return;
-    if (mode === "training") setLocalAnswer(val);
-    else onAnswerChange?.(val);
+
+    if (mode === "training") {
+      setLocalAnswer(val);
+    } else {
+      onAnswerChange?.(val);
+    }
   };
 
   const handleInputOpen = (rawVal: string, latexVal: string) => {
@@ -138,18 +167,18 @@ export const TaskCard = ({
                 const isThisSelected = currentAnswerRaw === ans;
                 const isThisCorrect = ans === problem.answers.correct;
 
-                let variantClass = "hover:bg-slate-100 border-slate-200";
+                let variantClass = "hover:bg-accent border-input";
 
                 if (showFeedback) {
                   if (isThisCorrect) {
-                    variantClass = "bg-green-100 border-green-500 text-green-800 hover:bg-green-100";
+                    variantClass = "bg-green-100 border-green-500 text-green-800 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-300";
                   } else if (isThisSelected && !isThisCorrect) {
-                    variantClass = "bg-red-100 border-red-500 text-red-800 hover:bg-red-100";
+                    variantClass = "bg-red-100 border-red-500 text-red-800 hover:bg-red-100 dark:bg-red-900/30 dark:text-red-300";
                   } else {
                     variantClass = "opacity-50";
                   }
                 } else if (isThisSelected) {
-                  variantClass = "bg-slate-900 text-white hover:bg-slate-800 border-slate-900";
+                  variantClass = "bg-primary text-primary hover:bg-primary/90 border-primary ring-2 ring-indigo-500 ring-offset-1";
                 }
 
                 return (
@@ -160,7 +189,9 @@ export const TaskCard = ({
                     onClick={() => handleSelectClosed(ans)}
                     disabled={showFeedback}
                   >
-                    <span className="font-bold mr-3 text-slate-400">{String.fromCharCode(65 + idx)}.</span>
+                    <span className={cn("font-bold mr-3", isThisSelected && !showFeedback ? "text-indigo-500" : "text-muted-foreground")}>
+                      {String.fromCharCode(65 + idx)}.
+                    </span>
                     <MathRenderer text={`$$${ans}$$`} />
                   </Button>
                 );
@@ -192,7 +223,7 @@ export const TaskCard = ({
         </div>
 
         {showFeedback && (
-          <div className={cn("flex items-center gap-2 p-4 rounded-lg animate-in fade-in zoom-in-95", isCorrect ? "bg-green-50 text-green-700" : "bg-red-200 text-red-700")}>
+          <div className={cn("flex items-center gap-2 p-4 rounded-lg animate-in fade-in zoom-in-95", isCorrect ? "bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-300" : "bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-300")}>
             {isCorrect ? <CheckCircle2 className="w-6 h-6" /> : <XCircle className="w-6 h-6" />}
             <span className="font-medium text-md">
               {isCorrect ? "Świetnie! Dobra odpowiedź." : "Niestety, to nie jest poprawna odpowiedź."}
@@ -208,8 +239,8 @@ export const TaskCard = ({
             </div>
             <div className="space-y-3">
               {problem.solution.steps.map((step, idx) => (
-                <div key={idx} className="flex gap-3 text-foreground/80 bg-background/60 p-3 rounded-md">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm font-bold">
+                <div key={idx} className="flex gap-3 text-foreground/80 bg-muted/50 p-3 rounded-md">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-bold">
                     {idx + 1}
                   </div>
                   <div className="text-base leading-relaxed">
