@@ -180,7 +180,7 @@ export const TaskCard = ({
                     variantClass = "opacity-50";
                   }
                 } else if (isThisSelected) {
-                  variantClass = "bg-primary text-primary-foreground hover:bg-primary/90 border-primary ring-2 ring-primary ring-offset-2 dark:ring-offset-slate-900";
+                  variantClass = "bg-primary text-primary hover:bg-primary/90 border-primary ring-2 ring-primary ring-offset-2 dark:ring-offset-slate-900";
                 }
 
                 return (
@@ -191,7 +191,7 @@ export const TaskCard = ({
                     onClick={() => handleSelectClosed(ans)}
                     disabled={showFeedback}
                   >
-                    <span className={cn("font-bold mr-3", isThisSelected && !showFeedback ? "text-primary-foreground/70" : "text-muted-foreground")}>
+                    <span className={cn("font-bold mr-3", isThisSelected && !showFeedback ? "text-primary/70" : "text-muted-foreground")}>
                       {String.fromCharCode(65 + idx)}.
                     </span>
                     <MathRenderer text={`$$${ans}$$`} />
