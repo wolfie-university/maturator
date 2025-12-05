@@ -19,17 +19,17 @@ export default function TrainingPage() {
   const activeTopicInfo = TOPICS.find(t => t.id === selectedTopic);
 
   return (
-    <main className="min-h-screen bg-slate-50 p-4 md:p-8">
+    <main className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-6xl mx-auto space-y-8">
 
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="space-y-1">
-            <h1 className="text-3xl font-bold text-slate-900">Trening Tematyczny</h1>
-            <p className="text-slate-500">Wybierz dział i szlifuj umiejętności.</p>
+            <h1 className="text-3xl font-bold text-foreground">Trening Tematyczny</h1>
+            <p className="text-foreground/70">Wybierz dział i szlifuj umiejętności.</p>
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="text-sm font-medium text-slate-600">Poziom:</span>
+            <span className="text-sm font-medium text-foreground/70">Poziom trudności:</span>
             <Select value={difficulty} onValueChange={(v) => setDifficulty(v as Difficulty)}>
               <SelectTrigger className="w-[140px]">
                 <SelectValue />
@@ -69,7 +69,7 @@ export default function TrainingPage() {
           <div className="animate-in slide-in-from-bottom-4 duration-500">
             <Button
               variant="ghost"
-              className="mb-4 gap-2 text-slate-500 hover:text-slate-900 pl-0"
+              className="mb-4 gap-2 text-neutral-500 hover:text-neutral-200 pl-0"
               onClick={() => setSelectedTopic(null)}
             >
               <ArrowLeft className="w-4 h-4" /> Wróć do listy tematów

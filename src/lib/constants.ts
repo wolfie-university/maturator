@@ -1,14 +1,16 @@
 import {
   Calculator,
   SquareFunction,
-  TrendingUp,
   Shapes,
   Ruler,
   PieChart,
   Binary,
   Sigma,
-  Activity,
   Box,
+  TriangleRight,
+  ChartNoAxesCombined,
+  DraftingCompass,
+  ChartColumn,
 } from "lucide-react";
 
 export const TOPICS = [
@@ -27,13 +29,13 @@ export const TOPICS = [
   {
     id: "quadratic",
     name: "Funkcja Kwadratowa",
-    icon: TrendingUp,
+    icon: DraftingCompass,
     description: "Wierzchołki, miejsca zerowe, nierówności.",
   },
   {
     id: "optimization",
     name: "Optymalizacja",
-    icon: Activity,
+    icon: ChartNoAxesCombined,
     description: "Zadania tekstowe na min/max.",
   },
   {
@@ -63,7 +65,7 @@ export const TOPICS = [
   {
     id: "trigonometry",
     name: "Trygonometria",
-    icon: Activity,
+    icon: TriangleRight,
     description: "Kąty, tożsamości, wzory.",
   },
   {
@@ -81,7 +83,7 @@ export const TOPICS = [
   {
     id: "statistics",
     name: "Statystyka",
-    icon: TrendingUp,
+    icon: ChartColumn,
     description: "Średnia, mediana, odchylenie.",
   },
 ];
