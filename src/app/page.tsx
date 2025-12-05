@@ -1,37 +1,107 @@
-"use client";
-
-import { TaskCard } from "@/components/math/TaskCard";
-import { useRandomProblem } from "@/hooks/useMathApi";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { ArrowRight, Calculator, GraduationCap, Sparkles } from "lucide-react";
 
 export default function Home() {
-  // Pobieramy losowe zadanie
-  const { data, isLoading, refetch, isError } = useRandomProblem("medium");
-
   return (
-    <main className="min-h-screen p-4 md:p-8 flex flex-col items-center justify-center">
-      <div className="max-w-3xl w-full space-y-8">
-        <div className="text-center space-y-2">
-          <h1 className="text-4xl font-bold tracking-tight text-slate-900">Maturator</h1>
-          <p>Twój nieskończony generator zadań maturalnych.</p>
-        </div>
+    <main className="flex flex-col items-center">
 
-        {isLoading ? (
-          <div className="flex justify-center py-20">
-            <Loader2 className="w-10 h-10 animate-spin" />
+      {/* Hero Section */}
+      <section className="w-full py-20 md:py-32 bg-gradient-to-b from-white to-slate-50 border-b">
+        <div className="max-w-5xl mx-auto px-4 text-center space-y-6">
+          <Badge variant="secondary" className="mb-4 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-4 py-1 text-sm">
+            <Sparkles className="w-3 h-3 mr-2 fill-indigo-600" />
+            Nowoczesna nauka matematyki
+          </Badge>
+          <h1 className="text-4xl md:text-6xl font-black tracking-tight text-slate-900 leading-[1.1]">
+            Zdominuj Maturę z <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600">Nieskończoną Bazą Zadań</span>
+          </h1>
+          <p className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed">
+            Maturator to inteligentny generator, który tworzy unikalne zadania matematyczne w czasie rzeczywistym.
+            Ćwicz konkretne działy lub sprawdź się w pełnym symulatorze egzaminu.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+            <Button asChild size="lg" className="h-12 px-8 text-base">
+              <Link href="/trening">Rozpocznij Trening</Link>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="h-12 px-8 text-base">
+              <Link href="/egzamin">Symulator Egzaminu</Link>
+            </Button>
           </div>
-        ) : isError ? (
-          <div className="text-center text-red-500">
-            Błąd połączenia z API. Sprawdź czy backend działa na porcie 3333.
+        </div>
+      </section>
+
+      {/* Modes Section */}
+      <section className="w-full py-20 px-4">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-2xl font-bold text-center mb-12 text-slate-800">Wybierz tryb nauki</h2>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Karta Trening */}
+            <Link href="/trening" className="group">
+              <Card className="h-full hover:shadow-xl hover:border-indigo-200 transition-all duration-300 relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                  <Calculator className="w-32 h-32 text-indigo-600" />
+                </div>
+                <CardHeader>
+                  <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4 text-indigo-600 group-hover:scale-110 transition-transform">
+                    <Calculator className="w-6 h-6" />
+                  </div>
+                  <CardTitle className="text-2xl">Trening Tematyczny</CardTitle>
+                  <CardDescription className="text-base">
+                    Idealny do nauki i powtórek. Wybierz konkretny dział (np. Geometria, Funkcje) i rozwiązuj zadania do skutku.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2 text-sm text-slate-600 mb-6">
+                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-indigo-400" /> 12 generatorów tematycznych</li>
+                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-indigo-400" /> Wybór poziomu trudności</li>
+                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-indigo-400" /> Natychmiastowe sprawdzanie</li>
+                  </ul>
+                  <Button variant="ghost" className="group-hover:translate-x-2 transition-transform p-0 hover:bg-transparent text-indigo-600">
+                    Wybierz tryb <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Karta Egzamin */}
+            <Link href="/egzamin" className="group">
+              <Card className="h-full hover:shadow-xl hover:border-violet-200 transition-all duration-300 relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                  <GraduationCap className="w-32 h-32 text-violet-600" />
+                </div>
+                <CardHeader>
+                  <div className="w-12 h-12 bg-violet-100 rounded-lg flex items-center justify-center mb-4 text-violet-600 group-hover:scale-110 transition-transform">
+                    <GraduationCap className="w-6 h-6" />
+                  </div>
+                  <CardTitle className="text-2xl">Symulator Matury</CardTitle>
+                  <CardDescription className="text-base">
+                    Sprawdź swoją wiedzę w warunkach egzaminacyjnych. Pełny arkusz, limit czasu i punktacja końcowa.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2 text-sm text-slate-600 mb-6">
+                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-violet-400" /> Pełny arkusz (~30 zadań)</li>
+                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-violet-400" /> Timer 170 minut</li>
+                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-violet-400" /> Szczegółowy raport wyników</li>
+                  </ul>
+                  <Button variant="ghost" className="group-hover:translate-x-2 transition-transform p-0 hover:bg-transparent text-violet-600">
+                    Wybierz tryb <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
-        ) : data ? (
-          <TaskCard
-            problem={data}
-            onNext={() => refetch()}
-          />
-        ) : null}
-      </div>
+        </div>
+      </section>
+
+      {/* Footer (prosty) */}
+      <footer className="w-full py-8 text-center text-slate-400 text-sm border-t bg-white">
+        <p>© 2025 Maturator. Projekt Open Source.</p>
+      </footer>
     </main>
   );
 }
