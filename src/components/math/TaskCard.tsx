@@ -100,9 +100,9 @@ export const TaskCard = ({
 
   return (
     <Card className="w-full max-w-3xl mx-auto shadow-lg animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <CardHeader className="bg-slate-50/50 border-b pb-4">
+      <CardHeader className="bg-background/50 border-y py-6">
         <div className="flex justify-between items-center mb-2">
-          <Badge variant="outline" className="text-xs uppercase tracking-wider text-slate-500">
+          <Badge variant="outline" className="text-xs uppercase tracking-wider text-foreground/40">
             {problem.meta.type.replace("Generator", "")}
           </Badge>
           <Badge
@@ -112,21 +112,21 @@ export const TaskCard = ({
             {problem.meta.difficulty}
           </Badge>
         </div>
-        <CardTitle className="text-xl font-medium leading-relaxed text-slate-800">
+        <CardTitle className="text-xl font-medium leading-relaxed text-foreground/80">
           <MathRenderer text={problem.content.question_text} />
         </CardTitle>
 
         {problem.content.question_latex && (
-          <div className="mt-4 p-4 bg-slate-100 rounded-lg text-center overflow-x-auto">
+          <div className="rounded-lg text-center overflow-x-auto">
             <MathRenderer text={`$$${problem.content.question_latex}$$`} block />
           </div>
         )}
       </CardHeader>
 
-      <CardContent className="pt-6 space-y-6">
+      <CardContent className="space-y-4">
         {problem.content.image_svg && (
           <div
-            className="flex justify-center p-4 bg-white border rounded-xl overflow-hidden [&>svg]:w-full [&>svg]:h-auto [&>svg]:max-h-[300px]"
+            className="flex justify-center border rounded-xl overflow-hidden [&>svg]:w-full [&>svg]:h-auto [&>svg]:max-h-[300px]"
             dangerouslySetInnerHTML={{ __html: problem.content.image_svg }}
           />
         )}
@@ -174,13 +174,15 @@ export const TaskCard = ({
                 disabled={showFeedback}
                 onEnter={mode === "training" ? handleSubmit : undefined}
                 placeholder="Wpisz wynik np. sqrt(3)/2 lub x=5"
-                className={cn(showFeedback && (isCorrect ? "ring-2 ring-green-500 rounded-lg" : "ring-2 ring-red-500 rounded-lg"))}
+                className={
+                  cn(showFeedback && (isCorrect ? "ring ring-offset-background/80 ring-green-500 ring-offset-4 rounded-lg" : "ring ring-offset-background/80 ring-red-500 ring-offset-4 rounded-lg"))
+                }
               />
 
               {showFeedback && (
-                <div className="mt-4 p-3 bg-slate-100 rounded-md border border-slate-200 flex flex-col items-center">
-                  <span className="text-xs text-slate-500 uppercase font-bold mb-1">Poprawna odpowiedź:</span>
-                  <div className="text-lg font-medium text-slate-800">
+                <div className="mt-4 p-3 rounded-md border flex flex-col items-center">
+                  <span className="text-xs text-foreground/70 uppercase font-bold mb-1">Poprawna odpowiedź:</span>
+                  <div className="text-lg font-medium text-foreground">
                     <MathRenderer text={`$$${problem.answers.correct}$$`} />
                   </div>
                 </div>
@@ -190,9 +192,9 @@ export const TaskCard = ({
         </div>
 
         {showFeedback && (
-          <div className={cn("flex items-center gap-2 p-4 rounded-lg animate-in fade-in zoom-in-95", isCorrect ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700")}>
+          <div className={cn("flex items-center gap-2 p-4 rounded-lg animate-in fade-in zoom-in-95", isCorrect ? "bg-green-50 text-green-700" : "bg-red-200 text-red-700")}>
             {isCorrect ? <CheckCircle2 className="w-6 h-6" /> : <XCircle className="w-6 h-6" />}
-            <span className="font-medium text-lg">
+            <span className="font-medium text-md">
               {isCorrect ? "Świetnie! Dobra odpowiedź." : "Niestety, to nie jest poprawna odpowiedź."}
             </span>
           </div>
@@ -200,13 +202,13 @@ export const TaskCard = ({
 
         {showSolution && (
           <div className="mt-6 border-t pt-6 animate-in slide-in-from-top-2">
-            <div className="flex items-center gap-2 mb-4 text-slate-800">
-              <HelpCircle className="w-5 h-5 text-indigo-500" />
+            <div className="flex items-center gap-2 mb-4 text-foreground/70">
+              <HelpCircle className="w-5 h-5 text-foreground/70" />
               <h3 className="font-semibold text-lg">Rozwiązanie krok po kroku</h3>
             </div>
             <div className="space-y-3">
               {problem.solution.steps.map((step, idx) => (
-                <div key={idx} className="flex gap-3 text-slate-600 bg-slate-50 p-3 rounded-md">
+                <div key={idx} className="flex gap-3 text-foreground/80 bg-background/60 p-3 rounded-md">
                   <div className="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm font-bold">
                     {idx + 1}
                   </div>
@@ -220,7 +222,7 @@ export const TaskCard = ({
         )}
       </CardContent>
 
-      <CardFooter className="flex justify-end gap-3 bg-slate-50/50 border-t p-4">
+      <CardFooter className="flex justify-end border-t">
         {mode === "training" && !isSubmitted ? (
           <Button
             size="lg"
