@@ -91,6 +91,8 @@ export const TaskCard = ({
       const correctNormalized = problem.answers.correct.replace(/\s+/g, "");
       const userNormalized = userLatex.replace(/\s+/g, "");
       const rawMatch = currentAnswerRaw?.replace(/\s+/g, "") === correctNormalized;
+
+      if (!currentAnswerRaw) return false;
       return userNormalized === correctNormalized || rawMatch;
     }
   }, [mode, isSubmitted, currentAnswerRaw, localInputLatex, problem]);
@@ -178,7 +180,7 @@ export const TaskCard = ({
                     variantClass = "opacity-50";
                   }
                 } else if (isThisSelected) {
-                  variantClass = "bg-primary text-primary hover:bg-primary/90 border-primary ring-2 ring-indigo-500 ring-offset-1";
+                  variantClass = "bg-primary text-primary-foreground hover:bg-primary/90 border-primary ring-2 ring-primary ring-offset-2 dark:ring-offset-slate-900";
                 }
 
                 return (
@@ -189,7 +191,7 @@ export const TaskCard = ({
                     onClick={() => handleSelectClosed(ans)}
                     disabled={showFeedback}
                   >
-                    <span className={cn("font-bold mr-3", isThisSelected && !showFeedback ? "text-indigo-500" : "text-muted-foreground")}>
+                    <span className={cn("font-bold mr-3", isThisSelected && !showFeedback ? "text-primary-foreground/70" : "text-muted-foreground")}>
                       {String.fromCharCode(65 + idx)}.
                     </span>
                     <MathRenderer text={`$$${ans}$$`} />
@@ -226,7 +228,11 @@ export const TaskCard = ({
           <div className={cn("flex items-center gap-2 p-4 rounded-lg animate-in fade-in zoom-in-95", isCorrect ? "bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-300" : "bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-300")}>
             {isCorrect ? <CheckCircle2 className="w-6 h-6" /> : <XCircle className="w-6 h-6" />}
             <span className="font-medium text-md">
-              {isCorrect ? "Świetnie! Dobra odpowiedź." : "Niestety, to nie jest poprawna odpowiedź."}
+              {isCorrect
+                ? "Świetnie! Dobra odpowiedź."
+                : !currentAnswerRaw
+                  ? "Nie udzielono odpowiedzi."
+                  : "Niestety, to nie jest poprawna odpowiedź."}
             </span>
           </div>
         )}
