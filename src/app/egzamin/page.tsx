@@ -91,10 +91,9 @@ export default function ExamPage() {
                     <span>Zadanie {idx + 1}</span>
                     <span>{isCorrect ? "Dobrze" : "Źle"}</span>
                   </div>
-                  <div
-                    className="p-4 bg-background/50"
-                  >
+                  <div className="p-4 bg-background/50">
                     <TaskCard
+                      key={`review-${idx}`}
                       problem={task}
                       mode="exam_review"
                       externalAnswer={answers[idx]}
@@ -138,6 +137,7 @@ export default function ExamPage() {
         <div className="order-2 lg:order-1">
           <div className="mb-4 text-primary font-medium">Zadanie {currentTaskIndex + 1} z {exam.tasks.length}</div>
           <TaskCard
+            key={currentTaskIndex}
             problem={currentTask}
             mode="exam_active"
             externalAnswer={answers[currentTaskIndex]}
@@ -174,9 +174,9 @@ export default function ExamPage() {
                   onClick={() => setCurrentTaskIndex(idx)}
                   className={cn(
                     "w-10 h-10 rounded-md flex items-center justify-center text-sm font-medium transition-all",
-                    isCurrent ? "primary ring-2 ring-offset-2 ring-indigo-500" :
-                      isAnswered ? "bg-indigo-100 text-indigo-700 border border-indigo-200" :
-                        "bg-foreground/80 text-secondary hover:bg-foreground cursor-pointer border"
+                    isCurrent ? "bg-primary text-primary-foreground ring-2 ring-offset-2 ring-primary" :
+                      isAnswered ? "bg-primary/20 text-primary border border-primary/30" :
+                        "bg-muted text-muted-foreground hover:bg-muted/80 cursor-pointer border"
                   )}
                 >
                   {idx + 1}
@@ -184,7 +184,7 @@ export default function ExamPage() {
               )
             })}
           </div>
-          <CardContent className="p-4 bg-yellow-100 rounded-lg text-sm text-yellow-800 flex gap-2 items-start">
+          <CardContent className="p-4 bg-yellow-100 rounded-lg text-sm text-yellow-800 flex gap-2 items-start mt-4 dark:bg-yellow-900/30 dark:text-yellow-200">
             <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
             <span>Pamiętaj, aby zatwierdzić egzamin przed upływem czasu!</span>
           </CardContent>
