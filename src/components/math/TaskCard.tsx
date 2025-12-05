@@ -4,11 +4,12 @@ import { useState, useMemo, useEffect } from "react";
 import { MathProblem } from "@/types/api";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, XCircle, ChevronRight, HelpCircle } from "lucide-react";
 import { MathRenderer } from "./MathRenderer";
+import { MathInput } from "./MathInput";
 import { shuffleArray, cn } from "@/lib/utils";
+import { parseToLatex } from "@/lib/mathParser";
 
 interface TaskCardProps {
   problem: MathProblem;
@@ -29,6 +30,7 @@ export const TaskCard = ({
 }: TaskCardProps) => {
   const [localAnswer, setLocalAnswer] = useState<string | null>(null);
   const [localInput, setLocalInput] = useState("");
+  const [localInputLatex, setLocalInputLatex] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSolutionVisible, setIsSolutionVisible] = useState(false);
 
@@ -36,12 +38,13 @@ export const TaskCard = ({
     if (mode === "training") {
       setLocalAnswer(null);
       setLocalInput("");
+      setLocalInputLatex("");
       setIsSubmitted(false);
       setIsSolutionVisible(false);
     }
   }, [problem, mode]);
 
-  const currentAnswer = mode === "training"
+  const currentAnswerRaw = mode === "training"
     ? (problem.answers.type === 'closed' ? localAnswer : localInput)
     : externalAnswer || "";
 
@@ -56,19 +59,31 @@ export const TaskCard = ({
   const isCorrect = useMemo(() => {
     if (mode === "training" && !isSubmitted) return false;
 
-    const ans = currentAnswer?.trim();
-    const correct = problem.answers.correct.trim();
-    return ans === correct;
-  }, [mode, isSubmitted, currentAnswer, problem]);
+    if (problem.answers.type === 'closed') {
+      return currentAnswerRaw === problem.answers.correct;
+    } else {
+      const userLatex = mode === "training" ? localInputLatex : parseToLatex(currentAnswerRaw || "");
+      const correctNormalized = problem.answers.correct.replace(/\s+/g, "");
+      const userNormalized = userLatex.replace(/\s+/g, "");
+      const rawMatch = currentAnswerRaw?.replace(/\s+/g, "") === correctNormalized;
+      return userNormalized === correctNormalized || rawMatch;
+    }
+  }, [mode, isSubmitted, currentAnswerRaw, localInputLatex, problem]);
 
-  const handleSelect = (val: string) => {
+  const handleSelectClosed = (val: string) => {
+    if (mode === "exam_review" || (mode === "training" && isSubmitted)) return;
+    if (mode === "training") setLocalAnswer(val);
+    else onAnswerChange?.(val);
+  };
+
+  const handleInputOpen = (rawVal: string, latexVal: string) => {
     if (mode === "exam_review" || (mode === "training" && isSubmitted)) return;
 
     if (mode === "training") {
-      if (problem.answers.type === 'closed') setLocalAnswer(val);
-      else setLocalInput(val);
+      setLocalInput(rawVal);
+      setLocalInputLatex(latexVal);
     } else {
-      onAnswerChange?.(val);
+      onAnswerChange?.(rawVal);
     }
   };
 
@@ -120,12 +135,12 @@ export const TaskCard = ({
           {problem.answers.type === "closed" ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {shuffledAnswers.map((ans, idx) => {
-                const isThisSelected = currentAnswer === ans;
+                const isThisSelected = currentAnswerRaw === ans;
                 const isThisCorrect = ans === problem.answers.correct;
 
                 let variantClass = "hover:bg-slate-100 border-slate-200";
 
-                if (mode === "exam_review" || (mode === "training" && isSubmitted)) {
+                if (showFeedback) {
                   if (isThisCorrect) {
                     variantClass = "bg-green-100 border-green-500 text-green-800 hover:bg-green-100";
                   } else if (isThisSelected && !isThisCorrect) {
@@ -142,8 +157,8 @@ export const TaskCard = ({
                     key={idx}
                     variant="outline"
                     className={cn("h-auto py-4 px-6 justify-start text-left text-base font-normal whitespace-normal transition-all", variantClass)}
-                    onClick={() => handleSelect(ans)}
-                    disabled={mode === "exam_review" || (mode === "training" && isSubmitted)}
+                    onClick={() => handleSelectClosed(ans)}
+                    disabled={showFeedback}
                   >
                     <span className="font-bold mr-3 text-slate-400">{String.fromCharCode(65 + idx)}.</span>
                     <MathRenderer text={`$$${ans}$$`} />
@@ -152,21 +167,24 @@ export const TaskCard = ({
               })}
             </div>
           ) : (
-            <div className="max-w-md mx-auto">
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Wpisz wynik..."
-                  value={currentAnswer || ""}
-                  onChange={(e) => handleSelect(e.target.value)}
-                  disabled={mode === "exam_review" || (mode === "training" && isSubmitted)}
-                  className={cn("text-lg", showFeedback && (isCorrect ? "border-green-500 bg-green-50" : "border-red-500 bg-red-50"))}
-                />
-                {showFeedback && (
-                  <div className="flex items-center whitespace-nowrap text-sm text-slate-500">
-                    Poprawna: <span className="font-bold ml-1"><MathRenderer text={`$$${problem.answers.correct}$$`} /></span>
+            <div className="max-w-xl mx-auto">
+              <MathInput
+                value={currentAnswerRaw || ""}
+                onChange={handleInputOpen}
+                disabled={showFeedback}
+                onEnter={mode === "training" ? handleSubmit : undefined}
+                placeholder="Wpisz wynik np. sqrt(3)/2 lub x=5"
+                className={cn(showFeedback && (isCorrect ? "ring-2 ring-green-500 rounded-lg" : "ring-2 ring-red-500 rounded-lg"))}
+              />
+
+              {showFeedback && (
+                <div className="mt-4 p-3 bg-slate-100 rounded-md border border-slate-200 flex flex-col items-center">
+                  <span className="text-xs text-slate-500 uppercase font-bold mb-1">Poprawna odpowiedź:</span>
+                  <div className="text-lg font-medium text-slate-800">
+                    <MathRenderer text={`$$${problem.answers.correct}$$`} />
                   </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -207,7 +225,7 @@ export const TaskCard = ({
           <Button
             size="lg"
             onClick={handleSubmit}
-            disabled={!currentAnswer}
+            disabled={!currentAnswerRaw}
             className="w-full md:w-auto"
           >
             Sprawdź odpowiedź
