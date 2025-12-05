@@ -14,20 +14,36 @@ interface TaskCardProps {
   problem: MathProblem;
   onNext?: () => void;
   showNextButton?: boolean;
+  mode?: "training" | "exam_active" | "exam_review";
+  externalAnswer?: string | null;
+  onAnswerChange?: (answer: string) => void;
 }
 
-export const TaskCard = ({ problem, onNext, showNextButton = true }: TaskCardProps) => {
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [inputValue, setInputValue] = useState("");
+export const TaskCard = ({
+  problem,
+  onNext,
+  showNextButton = true,
+  mode = "training",
+  externalAnswer,
+  onAnswerChange
+}: TaskCardProps) => {
+  const [localAnswer, setLocalAnswer] = useState<string | null>(null);
+  const [localInput, setLocalInput] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSolutionVisible, setIsSolutionVisible] = useState(false);
 
   useEffect(() => {
-    setSelectedAnswer(null);
-    setInputValue("");
-    setIsSubmitted(false);
-    setIsSolutionVisible(false);
-  }, [problem]);
+    if (mode === "training") {
+      setLocalAnswer(null);
+      setLocalInput("");
+      setIsSubmitted(false);
+      setIsSolutionVisible(false);
+    }
+  }, [problem, mode]);
+
+  const currentAnswer = mode === "training"
+    ? (problem.answers.type === 'closed' ? localAnswer : localInput)
+    : externalAnswer || "";
 
   const shuffledAnswers = useMemo(() => {
     if (problem.answers.type === "closed" && problem.answers.distractors) {
@@ -38,21 +54,34 @@ export const TaskCard = ({ problem, onNext, showNextButton = true }: TaskCardPro
   }, [problem]);
 
   const isCorrect = useMemo(() => {
-    if (!isSubmitted) return false;
-    if (problem.answers.type === "closed") {
-      return selectedAnswer === problem.answers.correct;
+    if (mode === "training" && !isSubmitted) return false;
+
+    const ans = currentAnswer?.trim();
+    const correct = problem.answers.correct.trim();
+    return ans === correct;
+  }, [mode, isSubmitted, currentAnswer, problem]);
+
+  const handleSelect = (val: string) => {
+    if (mode === "exam_review" || (mode === "training" && isSubmitted)) return;
+
+    if (mode === "training") {
+      if (problem.answers.type === 'closed') setLocalAnswer(val);
+      else setLocalInput(val);
     } else {
-      return inputValue.trim() === problem.answers.correct.trim();
+      onAnswerChange?.(val);
     }
-  }, [isSubmitted, selectedAnswer, inputValue, problem]);
+  };
 
   const handleSubmit = () => {
-    if ((problem.answers.type === "closed" && !selectedAnswer) ||
-      (problem.answers.type === "open" && !inputValue)) return;
+    if ((problem.answers.type === "closed" && !localAnswer) ||
+      (problem.answers.type === "open" && !localInput)) return;
 
     setIsSubmitted(true);
     setIsSolutionVisible(true);
   };
+
+  const showSolution = mode === "exam_review" || (mode === "training" && isSolutionVisible);
+  const showFeedback = mode === "exam_review" || (mode === "training" && isSubmitted);
 
   return (
     <Card className="w-full max-w-3xl mx-auto shadow-lg animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -91,14 +120,19 @@ export const TaskCard = ({ problem, onNext, showNextButton = true }: TaskCardPro
           {problem.answers.type === "closed" ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {shuffledAnswers.map((ans, idx) => {
-                let variantClass = "hover:bg-slate-100 border-slate-200";
-                const isThisSelected = selectedAnswer === ans;
+                const isThisSelected = currentAnswer === ans;
                 const isThisCorrect = ans === problem.answers.correct;
 
-                if (isSubmitted) {
-                  if (isThisCorrect) variantClass = "bg-green-100 border-green-500 text-green-800 hover:bg-green-100";
-                  else if (isThisSelected && !isThisCorrect) variantClass = "bg-red-100 border-red-500 text-red-800 hover:bg-red-100";
-                  else variantClass = "opacity-50";
+                let variantClass = "hover:bg-slate-100 border-slate-200";
+
+                if (mode === "exam_review" || (mode === "training" && isSubmitted)) {
+                  if (isThisCorrect) {
+                    variantClass = "bg-green-100 border-green-500 text-green-800 hover:bg-green-100";
+                  } else if (isThisSelected && !isThisCorrect) {
+                    variantClass = "bg-red-100 border-red-500 text-red-800 hover:bg-red-100";
+                  } else {
+                    variantClass = "opacity-50";
+                  }
                 } else if (isThisSelected) {
                   variantClass = "bg-slate-900 text-white hover:bg-slate-800 border-slate-900";
                 }
@@ -108,8 +142,8 @@ export const TaskCard = ({ problem, onNext, showNextButton = true }: TaskCardPro
                     key={idx}
                     variant="outline"
                     className={cn("h-auto py-4 px-6 justify-start text-left text-base font-normal whitespace-normal transition-all", variantClass)}
-                    onClick={() => !isSubmitted && setSelectedAnswer(ans)}
-                    disabled={isSubmitted}
+                    onClick={() => handleSelect(ans)}
+                    disabled={mode === "exam_review" || (mode === "training" && isSubmitted)}
                   >
                     <span className="font-bold mr-3 text-slate-400">{String.fromCharCode(65 + idx)}.</span>
                     <MathRenderer text={`$$${ans}$$`} />
@@ -122,12 +156,12 @@ export const TaskCard = ({ problem, onNext, showNextButton = true }: TaskCardPro
               <div className="flex gap-2">
                 <Input
                   placeholder="Wpisz wynik..."
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  disabled={isSubmitted}
-                  className={cn("text-lg", isSubmitted && (isCorrect ? "border-green-500 bg-green-50" : "border-red-500 bg-red-50"))}
+                  value={currentAnswer || ""}
+                  onChange={(e) => handleSelect(e.target.value)}
+                  disabled={mode === "exam_review" || (mode === "training" && isSubmitted)}
+                  className={cn("text-lg", showFeedback && (isCorrect ? "border-green-500 bg-green-50" : "border-red-500 bg-red-50"))}
                 />
-                {isSubmitted && (
+                {showFeedback && (
                   <div className="flex items-center whitespace-nowrap text-sm text-slate-500">
                     Poprawna: <span className="font-bold ml-1"><MathRenderer text={`$$${problem.answers.correct}$$`} /></span>
                   </div>
@@ -137,7 +171,7 @@ export const TaskCard = ({ problem, onNext, showNextButton = true }: TaskCardPro
           )}
         </div>
 
-        {isSubmitted && (
+        {showFeedback && (
           <div className={cn("flex items-center gap-2 p-4 rounded-lg animate-in fade-in zoom-in-95", isCorrect ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700")}>
             {isCorrect ? <CheckCircle2 className="w-6 h-6" /> : <XCircle className="w-6 h-6" />}
             <span className="font-medium text-lg">
@@ -146,7 +180,7 @@ export const TaskCard = ({ problem, onNext, showNextButton = true }: TaskCardPro
           </div>
         )}
 
-        {isSolutionVisible && (
+        {showSolution && (
           <div className="mt-6 border-t pt-6 animate-in slide-in-from-top-2">
             <div className="flex items-center gap-2 mb-4 text-slate-800">
               <HelpCircle className="w-5 h-5 text-indigo-500" />
@@ -169,17 +203,17 @@ export const TaskCard = ({ problem, onNext, showNextButton = true }: TaskCardPro
       </CardContent>
 
       <CardFooter className="flex justify-end gap-3 bg-slate-50/50 border-t p-4">
-        {!isSubmitted ? (
+        {mode === "training" && !isSubmitted ? (
           <Button
             size="lg"
             onClick={handleSubmit}
-            disabled={(!selectedAnswer && !inputValue) || isSubmitted}
+            disabled={!currentAnswer}
             className="w-full md:w-auto"
           >
             Sprawdź odpowiedź
           </Button>
         ) : (
-          showNextButton && (
+          showNextButton && onNext && (
             <Button size="lg" onClick={onNext} className="w-full md:w-auto gap-2">
               Następne zadanie <ChevronRight className="w-4 h-4" />
             </Button>
