@@ -59,9 +59,9 @@ export const MathInput: React.FC<MathInputProps> = ({
   };
 
   return (
-    <div className={cn("w-full space-y-2", className)}>
+    <div className={cn("w-full", className)}>
       {/* Pasek narzędzi */}
-      <div className="flex flex-wrap gap-2 mb-2 p-1 bg-slate-50 border rounded-lg">
+      <div className="flex flex-wrap gap-2 mb-2 p-1 bg-background/10 border rounded-lg">
         <Button
           variant="ghost"
           size="sm"
@@ -107,7 +107,7 @@ export const MathInput: React.FC<MathInputProps> = ({
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400">
+              <Button variant="ghost" size="icon" className="h-8 w-8 text-foreground/50">
                 <Info className="w-4 h-4" />
               </Button>
             </TooltipTrigger>
@@ -139,13 +139,12 @@ export const MathInput: React.FC<MathInputProps> = ({
         />
       </div>
 
-      {/* Podgląd na żywo */}
-      <div className="min-h-[40px] px-3 py-2 bg-white border rounded-md flex items-center justify-start text-slate-700 overflow-x-auto">
-        <span className="text-xs text-slate-400 mr-3 uppercase font-bold tracking-wider select-none">Podgląd:</span>
+      <div className="min-h-[40px] px-3 mt-4 py-2 bg-background/10 border rounded-md flex items-center justify-start text-foreground/90 overflow-x-auto">
+        <span className="text-xs text-foreground/65 mr-3 uppercase font-bold tracking-wider select-none">Podgląd:</span>
         {latexPreview ? (
           <MathRenderer text={`$$${latexPreview}$$`} />
         ) : (
-          <span className="text-slate-300 italic text-sm">Tu pojawi się matematyczny zapis...</span>
+          <span className="text-foreground/70 italic text-sm">Tu pojawi się matematyczny zapis...</span>
         )}
       </div>
     </div>
