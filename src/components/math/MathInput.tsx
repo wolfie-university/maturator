@@ -63,7 +63,7 @@ export const MathInput: React.FC<MathInputProps> = ({
       {/* Pasek narzędzi */}
       <div className="flex flex-wrap gap-2 mb-2 p-1 bg-background/10 border rounded-lg">
         <Button
-          variant="ghost"
+          variant="outline"
           size="sm"
           onClick={() => insertSymbol("/", 0)}
           disabled={disabled}
@@ -73,7 +73,7 @@ export const MathInput: React.FC<MathInputProps> = ({
           <span className="font-serif italic">a/b</span>
         </Button>
         <Button
-          variant="ghost"
+          variant="outline"
           size="sm"
           onClick={() => insertSymbol("sqrt()", -1)}
           disabled={disabled}
@@ -83,7 +83,7 @@ export const MathInput: React.FC<MathInputProps> = ({
           <span>√x</span>
         </Button>
         <Button
-          variant="ghost"
+          variant="outline"
           size="sm"
           onClick={() => insertSymbol("^2")}
           disabled={disabled}
@@ -93,7 +93,7 @@ export const MathInput: React.FC<MathInputProps> = ({
           <span>x²</span>
         </Button>
         <Button
-          variant="ghost"
+          variant="outline"
           size="sm"
           onClick={() => insertSymbol("pi")}
           disabled={disabled}
@@ -101,6 +101,36 @@ export const MathInput: React.FC<MathInputProps> = ({
         >
           <span>π</span>
         </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => insertSymbol("inf")}
+          disabled={disabled}
+          className="h-8 px-2"
+        >
+          <span>
+            ∞
+          </span>
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => insertSymbol("\\cup")}
+          disabled={disabled}
+          className="h-8 px-2"
+        >
+          <span>∪</span>
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => insertSymbol("\\cap")}
+          disabled={disabled}
+          className="h-8 px-2"
+        >
+          <span>∩</span>
+        </Button>
+
 
         <div className="flex-1" />
 
