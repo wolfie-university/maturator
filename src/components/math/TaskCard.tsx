@@ -5,7 +5,7 @@ import { MathProblem } from "@/types/api";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, XCircle, ChevronRight, HelpCircle, Lightbulb } from "lucide-react";
+import { CheckCircle2, XCircle, ChevronRight, HelpCircle, Lightbulb, ArrowRight } from "lucide-react";
 import { MathRenderer } from "./MathRenderer";
 import { MathInput } from "./MathInput";
 import { cn } from "@/lib/utils";
@@ -265,7 +265,7 @@ export const TaskCard = ({
                   <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-bold mt-0.5">
                     {idx + 1}
                   </div>
-                  <div className="text-base leading-relaxed overflow-x-auto">
+                  <div className="text-base leading-relaxed overflow-x-hidden w-full">
                     <MathRenderer text={step} />
                   </div>
                 </div>
@@ -277,14 +277,25 @@ export const TaskCard = ({
 
       <CardFooter className="flex justify-end border-t pt-6 pb-6">
         {mode === "training" && !isSubmitted ? (
-          <Button
-            size="lg"
-            onClick={handleSubmit}
-            disabled={!currentAnswerRaw}
-            className="w-full md:w-auto shadow-md"
-          >
-            Sprawdź odpowiedź
-          </Button>
+          <div className="w-full flex justify-between">
+            <Button
+              size="lg"
+              onClick={handleSubmit}
+              disabled={!currentAnswerRaw}
+              className="w-full md:w-auto shadow-md"
+            >
+              Sprawdź odpowiedź
+            </Button>
+            <Button
+              size="lg"
+              variant="secondary"
+              onClick={onNext}
+              className="w-full md:w-auto shadow-md"
+            >
+              Pomiń zadanie
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </div>
         ) : (
           showNextButton && onNext && (
             <Button size="lg" onClick={onNext} className="w-full md:w-auto gap-2 shadow-md">
