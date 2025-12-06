@@ -169,14 +169,16 @@ export const MathInput: React.FC<MathInputProps> = ({
         />
       </div>
 
-      <div className="min-h-[40px] px-3 mt-4 py-2 bg-background/10 border rounded-md flex items-center justify-start text-foreground/90 overflow-x-auto">
-        <span className="text-xs text-foreground/65 mr-3 uppercase font-bold tracking-wider select-none">Podgląd:</span>
-        {latexPreview ? (
-          <MathRenderer text={`$$${latexPreview}$$`} />
-        ) : (
-          <span className="text-foreground/70 italic text-sm">Tu pojawi się matematyczny zapis...</span>
-        )}
-      </div>
+      {disabled ? null : (
+        <div className="min-h-[40px] px-3 mt-4 py-2 bg-background/10 border rounded-md flex items-center justify-start text-foreground/90 overflow-x-auto">
+          <span className="text-xs text-foreground/65 mr-3 uppercase font-bold tracking-wider select-none">Podgląd:</span>
+          {latexPreview ? (
+            <MathRenderer text={`$$${latexPreview}$$`} />
+          ) : (
+            <span className="text-foreground/70 italic text-sm">Tu pojawi się matematyczny zapis...</span>
+          )}
+        </div>
+      )}
     </div>
   );
 };
