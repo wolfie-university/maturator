@@ -30,6 +30,8 @@ export interface MathProblem {
   content: ProblemContent;
   answers: ProblemAnswers;
   solution: ProblemSolution;
+  question_type: "closed" | "open";
+  answer_format: string;
 }
 
 export interface ExamResponse {
