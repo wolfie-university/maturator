@@ -280,20 +280,20 @@ export const TaskCard = ({
           <div className="w-full flex justify-between">
             <Button
               size="lg"
-              onClick={handleSubmit}
-              disabled={!currentAnswerRaw}
-              className="w-full md:w-auto shadow-md"
-            >
-              Sprawdź odpowiedź
-            </Button>
-            <Button
-              size="lg"
               variant="secondary"
               onClick={onNext}
               className="w-full md:w-auto shadow-md"
             >
               Pomiń zadanie
               <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+            <Button
+              size="lg"
+              onClick={handleSubmit}
+              disabled={!currentAnswerRaw}
+              className="w-full md:w-auto shadow-md"
+            >
+              Sprawdź odpowiedź
             </Button>
           </div>
         ) : (
