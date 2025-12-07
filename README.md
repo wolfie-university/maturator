@@ -8,7 +8,7 @@ Unlike traditional textbooks or static question banks where you eventually run o
 
 ## 🚀 Key Features
 
-* **♾️ Infinite Problem Generation**: Powered by my custom backend, tasks are generated on-the-fly. No static databases, no memorizing answers.
+* **Infinite Problem Generation**: Powered by my custom backend, tasks are generated on-the-fly. No static databases, no memorizing answers.
 * **Two Study Modes**:
     * **Thematic Training**: Focus on specific topics like Algebra, Geometry, Functions, or Probability and more.
     * **Exam Simulator**: A full-scale simulation of the real exam. 30+ tasks, 180-minute timer, and a detailed score report at the end.
@@ -16,7 +16,7 @@ Unlike traditional textbooks or static question banks where you eventually run o
 * **Smart Math Input**: A custom input interface that allows users to easily type complex mathematical symbols (roots, fractions, powers).
 * **Instant Feedback**: Immediate validation for closed (ABCD) and open-ended questions.
 
-## 🧠 The Engine
+## 🧠 Engine
 
 This project is the frontend interface for a larger ecosystem. The logic behind the mathematical generation resides in my standalone API:
 
@@ -85,26 +85,26 @@ Contributions are welcome! If you have ideas for new features or want to improve
 
 1. Fork the repository.
 
-2. Create a new branch (git checkout -b feature/AmazingFeature).
+2. Create a new branch (`git checkout -b feature/AmazingFeature`).
 
-3. Commit your changes (git commit -m 'Add some AmazingFeature').
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
 
-4. Push to the branch (git push origin feature/AmazingFeature).
+4. Push to the branch (`git push origin feature/AmazingFeature`).
 
 5. Open a Pull Request.
 
 ## 📜 License
 
-Distributed under the MIT License. See [LICENSE](./LICENSE) for more information.
+Distributed under the MIT License. See [LICENSE](./LICENSE.md) for more information.
 
 ## ✍️ Author
 
 Szymon Wilczek
 
-- GitHub: @szymonwilczek
+- GitHub: [@szymonwilczek](https://github.com/szymonwilczek)
 
 - Website: [https://szymon-wilczek.me](https://szymon-wilczek.me)
 
-<tr/>
+<hr/>
 
 Built with ❤️ for students preparing for the Matura exam.
