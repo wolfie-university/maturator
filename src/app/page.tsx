@@ -20,7 +20,7 @@ export default function Home() {
           </h1>
           <p className="text-lg md:text-xl text-foreground/80 max-w-2xl mx-auto leading-relaxed">
             Maturator to inteligentny generator, który tworzy unikalne zadania matematyczne w czasie rzeczywistym.
-            Ćwicz konkretne działy lub sprawdź się w pełnym symulatorze egzaminu.
+            Ćwicz konkretne działy <br className="hidden md:flex" /> lub sprawdź się w pełnym symulatorze egzaminu.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <Button asChild size="lg" className="h-12 px-8 text-base">
