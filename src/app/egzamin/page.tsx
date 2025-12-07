@@ -20,7 +20,7 @@ export default function ExamPage() {
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [timeLeft, setTimeLeft] = useState(EXAM_TIME_SECONDS);
-  const [difficulty, setDifficulty] = useState<Difficulty>("medium");
+  const [difficulty] = useState<Difficulty>("medium");
 
   const { data: exam, isLoading } = useExam(difficulty);
 
