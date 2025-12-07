@@ -222,9 +222,13 @@ export const TaskCard = ({
               {problem.answer_format && !showFeedback && (
                 <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground bg-muted/30 p-2 rounded-md w-fit">
                   <Lightbulb className="w-3 h-3" />
-                  <span>
-                    Format odpowiedzi: <MathRenderer text={`$$${problem.answer_format}$$`} className="font-mono font-medium text-foreground/80 ml-1" />
-                  </span>
+                  {problem.answer_format === "number" ? (
+                    <span>Format odpowiedzi: Wpisz wynik jako liczbę.</span>
+                  ) : (
+                    <span>
+                      Format odpowiedzi: <MathRenderer text={`$$${problem.answer_format}$$`} className="font-mono font-medium text-foreground/80 ml-1" />
+                    </span>
+                  )}
                 </div>
               )}
 
