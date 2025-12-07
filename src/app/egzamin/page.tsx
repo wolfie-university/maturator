@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { Difficulty } from "@/types/api";
 import { ExamCanvasCard } from "@/components/exam/ExamCanvasCard";
 
-const EXAM_TIME_SECONDS = 170 * 60;
+const EXAM_TIME_SECONDS = 180 * 60;
 
 type ExamStatus = "intro" | "cover" | "instruction" | "active" | "finished";
 
