@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Cantarell } from "next/font/google";
 import "./globals.css";
 import "katex/dist/katex.min.css";
 import ReactQueryProvider from "@/providers/ReactQueryProvider";
@@ -16,6 +16,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const cantarell = Cantarell({
+  weight: "700",
+  subsets: ["latin"],
+  variable: "--font-cantarell",
+});
+
 export const metadata: Metadata = {
   title: "Maturator - Generator Zadań Maturalnych",
   description: "Nieskończona baza zadań z matematyki. Przygotuj się do matury za darmo.",
@@ -29,7 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${cantarell.variable} antialiased`}
       >
         <ThemeProvider
           attribute="class"
