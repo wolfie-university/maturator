@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Calculator, GraduationCap, Menu } from "lucide-react";
+import { Calculator, GraduationCap, InfoIcon, Menu } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -22,6 +22,7 @@ export function Navbar() {
   const routes = [
     { href: "/trening", label: "Trening Tematyczny", icon: Calculator },
     { href: "/egzamin", label: "Symulator Matury", icon: GraduationCap },
+    { href: "/about", label: "O projekcie", icon: InfoIcon },
   ];
 
   return (
