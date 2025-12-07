@@ -6,14 +6,17 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { TaskCard } from "@/components/math/TaskCard";
-import { Clock, CheckCircle, AlertTriangle } from "lucide-react";
+import { Clock, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Difficulty } from "@/types/api";
+import { ExamCanvasCard } from "@/components/exam/ExamCanvasCard";
 
 const EXAM_TIME_SECONDS = 170 * 60;
 
+type ExamStatus = "intro" | "cover" | "instruction" | "active" | "finished";
+
 export default function ExamPage() {
-  const [status, setStatus] = useState<"intro" | "active" | "finished">("intro");
+  const [status, setStatus] = useState<ExamStatus>("intro");
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [timeLeft, setTimeLeft] = useState(EXAM_TIME_SECONDS);
@@ -23,6 +26,7 @@ export default function ExamPage() {
 
   useEffect(() => {
     if (status !== "active") return;
+
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
@@ -33,6 +37,13 @@ export default function ExamPage() {
       });
     }, 1000);
     return () => clearInterval(timer);
+  }, [status]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }, 100);
+    return () => clearTimeout(timer);
   }, [status]);
 
   const formatTime = (seconds: number) => {
@@ -50,6 +61,73 @@ export default function ExamPage() {
     return Math.round((score / exam.tasks.length) * 100);
   };
 
+  const drawCoverOverlay = (ctx: CanvasRenderingContext2D, w: number, h: number) => {
+    const now = new Date();
+
+    const dayName = now.toLocaleDateString("pl-PL", { weekday: "long" });
+    const dayLetter = dayName.charAt(0).toUpperCase();
+    const dayNum = String(now.getDate()).padStart(2, "0");
+    const code = `${dayLetter}${dayNum}`; // S08 (Sobota 08)
+
+    const dd = String(now.getDate()).padStart(2, "0");
+    const mm = String(now.getMonth() + 1).padStart(2, "0");
+    const yyyy = now.getFullYear();
+    const time = now.toLocaleTimeString("pl-PL", { hour: "2-digit", minute: "2-digit" });
+    const fullDate = `${dd}.${mm}.${yyyy}`;
+
+    const peselEggs = [
+      "POWODZENIA!",
+      "MATURATOR<3",
+      "BEDZIE_30%+",
+      "DUMNY_WYNIK",
+      "100%_WIEDZY"
+    ];
+    const randomEgg = peselEggs[Math.floor(Math.random() * peselEggs.length)];
+    const peselChars = randomEgg.padEnd(11, " ").slice(0, 11).split("");
+
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "#000";
+
+    // KOD 
+    ctx.font = `bold ${h * 0.025}px Cantarell`;
+    ctx.fillStyle = "#000";
+    ctx.textAlign = "center";
+
+    const codeStartX = w * 0.1555;
+    const codeY = h * 0.176;
+    const codeStep = w * 0.030;
+
+    code.split("").forEach((char, index) => {
+      ctx.fillText(char, codeStartX + (index * codeStep), codeY);
+    });
+
+    ctx.textAlign = "left";
+
+    // DATA
+    ctx.font = `bold ${h * 0.020}px Cantarell`;
+    ctx.fillStyle = "#000";
+    ctx.fillText(fullDate, w * 0.20, h * 0.586);
+
+    // GODZINA
+    ctx.fillText(time, w * 0.405, h * 0.6205);
+
+    // PESEL
+    ctx.font = `bold ${h * 0.025}px Cantarell`;
+    ctx.fillStyle = "#000";
+    ctx.textAlign = "center";
+
+    const startX = w * 0.278;
+    const startY = h * 0.176;
+    const stepX = w * 0.0285;
+
+    peselChars.forEach((char, index) => {
+      ctx.fillText(char, startX + (index * stepX), startY);
+    });
+
+    ctx.textAlign = "left"; // safety reset
+  };
+
+
   if (status === "intro") {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background p-4">
@@ -60,12 +138,35 @@ export default function ExamPage() {
             Po zakończeniu wyświetli się szczegółowy raport. Powodzenia!
           </p>
           <div className="flex justify-center gap-4">
-            <Button size="lg" onClick={() => setStatus("active")} disabled={isLoading}>
+            <Button size="lg" onClick={() => setStatus("cover")} disabled={isLoading}>
               {isLoading ? "Generowanie arkusza..." : "Rozpocznij Egzamin"}
             </Button>
           </div>
         </Card>
       </div>
+    );
+  }
+
+  if (status === "cover") {
+    return (
+      <ExamCanvasCard
+        imageSrc="/matura_strona1.png"
+        title="Strona tytułowa arkusza"
+        buttonText="Przejdź do instrukcji"
+        onNext={() => setStatus("instruction")}
+        drawOverlay={drawCoverOverlay}
+      />
+    );
+  }
+
+  if (status === "instruction") {
+    return (
+      <ExamCanvasCard
+        imageSrc="/instrukcja.png"
+        title="Instrukcja dla zdającego"
+        buttonText="Przejdź do zadań (Start czasu)"
+        onNext={() => setStatus("active")}
+      />
     );
   }
 
