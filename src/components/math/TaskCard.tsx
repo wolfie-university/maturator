@@ -281,12 +281,12 @@ export const TaskCard = ({
 
       <CardFooter className="flex justify-end border-t pt-6 pb-6">
         {mode === "training" && !isSubmitted ? (
-          <div className="w-full flex justify-between">
+          <div className="w-full flex max-md:flex-col justify-between">
             <Button
               size="lg"
               variant="secondary"
               onClick={onNext}
-              className="w-full md:w-auto shadow-md"
+              className="md:w-auto shadow-md max-md:mb-2"
             >
               Pomiń zadanie
               <ArrowRight className="w-4 h-4 ml-2" />
@@ -295,7 +295,7 @@ export const TaskCard = ({
               size="lg"
               onClick={handleSubmit}
               disabled={!currentAnswerRaw}
-              className="w-full md:w-auto shadow-md"
+              className="md:w-auto shadow-md"
             >
               Sprawdź odpowiedź
             </Button>
