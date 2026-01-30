@@ -12,7 +12,7 @@ import { Difficulty } from "@/types/api";
 
 export default function TrainingPage() {
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
-  const [difficulty, setDifficulty] = useState<Difficulty>("medium");
+  const [difficulty, setDifficulty] = useState<Difficulty>("easy");
 
   const { data: problem, isLoading, refetch, isFetching } = useTopicProblem(selectedTopic || "", difficulty);
 
